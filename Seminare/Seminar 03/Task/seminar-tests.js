@@ -31,13 +31,13 @@ function record(passed, name, detail) {
 function assertEqual(actual, expected, name) {
   const a = JSON.stringify(actual);
   const e = JSON.stringify(expected);
-  const hint = a === undefined && e !== undefined ? " - Funktion noch nicht implementiert?" : "";
+  const hint = a === undefined && e !== undefined ? ", Funktion noch nicht implementiert?" : "";
   // Bewusst OHNE erwarteten Wert: Die Vorhersagen sollt IHR treffen.
-  record(a === e, name, `Noch nicht richtig - erhalten: ${a}${hint}`);
+  record(a === e, name, `Noch nicht richtig, erhalten: ${a}${hint}`);
 }
 
 function assertTrue(value, name, detail = "Noch nicht erfüllt") {
-  record(value === true, name, value === true ? "" : `${detail} - erhalten: ${String(value)}`);
+  record(value === true, name, value === true ? "" : `${detail}, erhalten: ${String(value)}`);
 }
 
 function assertThrows(fn, name, expectedType = "RangeError") {
@@ -46,7 +46,7 @@ function assertThrows(fn, name, expectedType = "RangeError") {
     record(false, name, "Es wurde keine Exception ausgelöst.");
   } catch (err) {
     record(err.constructor.name === expectedType, name,
-      `Noch nicht die richtige Fehlerart - erhalten: ${err.constructor.name}`);
+      `Noch nicht die richtige Fehlerart, erhalten: ${err.constructor.name}`);
   }
 }
 
@@ -68,7 +68,7 @@ function testEq(name, actualFn, expected) {
 
 function errorDetail(err) {
   const missing = /is not a function|is not defined|Cannot read|Cannot convert/.test(err.message)
-    ? " - Funktion noch nicht implementiert?"
+    ? ", Funktion noch nicht implementiert?"
     : "";
   return `${err.constructor.name}: ${err.message}${missing}`;
 }
@@ -152,10 +152,10 @@ const PREDICTION_ITEMS = [
 // den inhaltlichen Abschnitten noch "1. Ablauf und Setup").
 const TASKS = [
   { section: "2. Typen und Coercion", pdf: "2", name: "Vorhersagen eintragen",
-    note: "Wird direkt oben an den Eingabefeldern geprüft - grün = richtig, rot = falsch." },
+    note: "Wird direkt oben an den Eingabefeldern geprüft, grün = richtig, rot = falsch." },
   { section: "3. Variablen und Hoisting", pdf: "3.1", name: "MAX_POINTS" },
   { section: "3. Variablen und Hoisting", pdf: "3.2", name: "Hoisting-Vorhersage",
-    note: "Wird direkt oben an den Auswahlfeldern geprüft - grün = richtig, rot = falsch." },
+    note: "Wird direkt oben an den Auswahlfeldern geprüft, grün = richtig, rot = falsch." },
   { section: "3. Variablen und Hoisting", pdf: "3.3", name: "Call Stack bis zum Anschlag" },
   { section: "4. Funktionen als First-Class Citizens", pdf: "4.1", name: "Prozente und Bestehen" },
   { section: "4. Funktionen als First-Class Citizens", pdf: "4.2", name: "Ohne Schleifen" },
@@ -165,9 +165,9 @@ const TASKS = [
   { section: "5. Objekte und Prototypen", pdf: "5.3", name: "Methoden im Nachhinein" },
   { section: "6. Event Loop und Asynchronität", pdf: "6.1", name: "Callbacks vs. Promises" },
   { section: "6. Event Loop und Asynchronität", pdf: "6.2", name: "Ausgabereihenfolge vorhersagen",
-    note: "Wird direkt unter den Karten geprüft - grün = richtige Reihenfolge, rot = noch offen." },
+    note: "Wird direkt unter den Karten geprüft, grün = richtige Reihenfolge, rot = noch offen." },
   { section: "6. Event Loop und Asynchronität", pdf: "6.3", name: "Fehler bewusst erleben",
-    note: "Kein automatischer Test - eure unbehandelte Rejection erscheint als Warnung in der Browser-Konsole (F12)." },
+    note: "Kein automatischer Test, eure unbehandelte Rejection erscheint als Warnung in der Browser-Konsole (F12)." },
   { section: "6. Event Loop und Asynchronität", pdf: "6.4", name: "async/await" },
 ];
 
@@ -433,7 +433,7 @@ function runSyncTests() {
   /* ----- Aufgabe 4: Funktionen als First-Class Citizens ----- */
   task("Prozente und Bestehen");
 
-  testEq("toPercent(50) - Skalierung mit MAX_POINTS", () => toPercent(50), 50);
+  testEq("toPercent(50), Skalierung mit MAX_POINTS", () => toPercent(50), 50);
   testEq("isPassing(50) ist true (Grenze)", () => isPassing(50), true);
   testEq("isPassing(49.9) ist false", () => isPassing(49.9), false);
 
@@ -514,8 +514,8 @@ let s2; // wird im Prototyp-Test erzeugt und danach weiterverwendet
 // Asynchrone Ergebnisse zusätzlich als Zeilen eintragen:
 function assertSoft(actual, expected, name) {
   const ok = JSON.stringify(actual) === JSON.stringify(expected);
-  const hint = !ok && actual === undefined ? " - Funktion noch nicht implementiert?" : "";
-  record(ok, name, ok ? "" : `Noch nicht richtig - erhalten: ${JSON.stringify(actual)}${hint}`);
+  const hint = !ok && actual === undefined ? ", Funktion noch nicht implementiert?" : "";
+  record(ok, name, ok ? "" : `Noch nicht richtig, erhalten: ${JSON.stringify(actual)}${hint}`);
   return ok;
 }
 
@@ -567,7 +567,7 @@ function runAsyncTests() {
     if (!callbackCalled) {
       currentTask = callbackTask;
       record(false, "loadGradesCallback liefert Noten",
-        "Der Callback wurde nach 1,5 s nie aufgerufen - Funktion noch nicht implementiert?");
+        "Der Callback wurde nach 1,5 s nie aufgerufen, Funktion noch nicht implementiert?");
     }
     render();
 
