@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <title>Seminar 03 - GradeCalc Testumgebung</title>
+        <style>
+            /* ---------- Grundlayout ---------- */
+            body {
+                font-family: system-ui, sans-serif;
+                max-width: 720px;
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+            h2 { font-size: 1.1rem; }
+            p.hint { color: #555; }
+
+            /* ---------- Testliste ---------- */
+            .test {
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                padding: 0.5rem 0.75rem;
+                margin: 0.4rem 0;
+            }
+            .test.pass { border-color: #2e7d32; background: #e8f5e9; }
+            .test.fail { border-color: #c62828; background: #ffebee; }
+            .mark { margin-right: 0.5rem; }
+            .detail {
+                color: #c62828;
+                font-size: 0.9rem;
+                margin-top: 0.25rem;
+            }
+            #test-output h3 { margin: 1.1rem 0 0.3rem; font-size: 1.05rem; }
+            #test-output .task { margin: 0.5rem 0 0.15rem; font-weight: 600; color: #333; }
+            #test-output .task-note { color: #555; font-size: 0.9rem; margin: 0.2rem 0 0.4rem; }
+
+            /* ---------- Aufgabe 2 + 3.2: Vorhersage-Eingaben ---------- */
+            #coercion-inputs, #hoisting-inputs {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+                gap: 0.5rem;
+                margin: 0.6rem 0 1rem;
+            }
+            .predict-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.75rem;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 0.35rem 0.6rem;
+                background: #f9f9f9;
+            }
+            .predict-expr { font-family: ui-monospace, monospace; font-size: 0.85rem; }
+            .predict-row select, .predict-row input {
+                font: inherit;
+                padding: 0.25rem 0.4rem;
+                border: 1px solid #999;
+                border-radius: 6px;
+                background: #fff;
+                min-width: 8rem;
+            }
+            .predict-row select.ok, .predict-row input.ok { border-color: #2e7d32; background: #e8f5e9; }
+            .predict-row select.err, .predict-row input.err { border-color: #c62828; background: #ffebee; }
+
+            /* ---------- Aufgabe 6.2: Code-Auszug mit Syntax-Highlighting ---------- */
+            #order-code {
+                background: #f4f4f4;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 0.6rem 0.8rem;
+                font-family: ui-monospace, monospace;
+                font-size: 0.85rem;
+                overflow-x: auto;
+                margin: 0.6rem 0;
+            }
+            #order-code .kw { color: #7c4dff; font-weight: 600; }
+            #order-code .builtin { color: #00838f; }
+            #order-code .method { color: #37474f; }
+            #order-code .str { color: #2e7d32; }
+            #order-code .num { color: #c2185b; }
+
+            /* ---------- Aufgabe 6.2: Karten-Sortierung ---------- */
+            #order-slots {
+                list-style: none;
+                margin: 0.5rem 0;
+                padding: 0;
+                counter-reset: slot;
+            }
+            #order-slots .slot {
+                counter-increment: slot;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                min-height: 2.4rem;
+                border: 1px dashed #bbb;
+                border-radius: 6px;
+                margin: 0.35rem 0;
+                padding: 0.25rem 0.5rem;
+            }
+            #order-slots .slot::before { content: counter(slot) "."; font-weight: 600; color: #666; }
+            #order-slots .slot.over { border-color: #2e7d32; background: #e8f5e9; }
+            #order-slots .slot .card { flex: 1; margin: 0; }
+            #order-pool {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.4rem;
+                margin: 0.4rem 0;
+            }
+            .card {
+                font-family: ui-monospace, monospace;
+                font-size: 0.85rem;
+                border: 1px solid #999;
+                border-radius: 6px;
+                background: #f9f9f9;
+                padding: 0.4rem 0.6rem;
+                cursor: grab;
+                user-select: none;
+            }
+            .card:active { cursor: grabbing; }
+            #order-result { margin: 0.6rem 0 1rem; font-size: 0.95rem; }
+            #order-result.ok { color: #2e7d32; font-weight: 600; }
+            #order-result.err { color: #c62828; }
+        </style>
+    </head>
+    <body>
+        <h1>Seminar 03 - GradeCalc</h1>
+        <p class="hint">
+            Implementiert die Funktionen in <code>seminar.js</code>.
+            Diese Seite prüft automatisch - grün = bestanden, rot = noch offen.
+            Rote Tests zeigen nur, was euer Code geliefert hat - die
+            erwarteten Werte verrät die Prüfung absichtlich nicht.
+            Jeder Test läuft einzeln: Wirft eine Funktion noch einen Fehler,
+            wird nur ihr Test rot - die anderen laufen weiter.
+            Aufgabe 6.2 schreibt ihr nicht in Code, sondern sortiert
+            Karten direkt auf dieser Seite. Die Vorhersagen aus
+            Aufgabe 2 und die Hoisting-Vorhersage aus Aufgabe 3.2
+            tragt ihr ebenfalls direkt hier ein.
+        </p>
+
+        <!-- Aufgabe 2: Typen und Coercion -->
+        <h2>Aufgabe 2: Vorhersagen eintragen</h2>
+        <p class="hint">
+            Sagt JEDEN Wert vorher - ohne die Ausdrücke auszuführen!
+            Bei Vergleichen wählt ihr <code>true</code> oder <code>false</code>,
+            bei den übrigen Ausdrücken tippt ihr euer Ergebnis.
+            Grün = richtig, rot = noch offen.
+        </p>
+        <div id="coercion-inputs"></div>
+
+        <!-- Aufgabe 3.2: Hoisting -->
+        <h2>Aufgabe 3.2: Hoisting-Vorhersage</h2>
+        <p class="hint">
+            Was loggen diese Zeilen? Wählt für jede Zeile
+            <code>undefined</code> oder <code>ReferenceError</code>.
+            Grün = richtig, rot = noch offen.
+        </p>
+        <div id="hoisting-inputs"></div>
+
+        <!-- Aufgabe 6.2: Ausgabereihenfolge -->
+        <h2>Aufgabe 6.2: Ausgabereihenfolge vorhersagen</h2>
+        <p class="hint">
+            Der Test führt diesen Code wirklich aus - sagt vorher, was passiert:
+            Zieht die Karten in die Reihenfolge, in der die Zeilen ausgeführt
+            werden (Call Stack → Microtasks → Task Queue). Klick auf eine Karte
+            im Vorrat legt sie in den nächsten freien Platz, Klick auf eine
+            einsortierte Karte legt sie zurück. Das Ergebnis steht live unter
+            den Karten.
+        </p>
+<pre id="order-code"><code><span class="kw">const</span> order = [];
+order.<span class="method">push</span>(<span class="str">"S"</span>);
+<span class="builtin">Promise</span>.<span class="method">resolve</span>().<span class="method">then</span>(() =&gt; order.<span class="method">push</span>(<span class="str">"P"</span>));
+<span class="builtin">setTimeout</span>(() =&gt; order.<span class="method">push</span>(<span class="str">"T"</span>), <span class="num">0</span>);
+<span class="builtin">Promise</span>.<span class="method">resolve</span>().<span class="method">then</span>(() =&gt; order.<span class="method">push</span>(<span class="str">"Micro"</span>));
+order.<span class="method">push</span>(<span class="str">"K"</span>);</code></pre>
+        <ol id="order-slots"></ol>
+        <p class="hint">Vorrat:</p>
+        <div id="order-pool"></div>
+        <div id="order-result"></div>
+
+        <!-- Testliste -->
+        <div id="test-output"><p class="hint">Tests werden geladen …</p></div>
+
+        <script src="seminar.js"></script>
+        <script src="seminar-tests.js"></script>
+    </body>
+</html>

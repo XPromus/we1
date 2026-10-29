@@ -79,7 +79,7 @@
   }
   let footer(self) = {
     set std.align(center + bottom)
-    set text(size: .4em)
+    set text(size: hszg-footer-font-size)
     {
       let cell(..args, it) = components.cell(
         ..args,
@@ -490,7 +490,7 @@
     ),
     config-methods(
       init: (self: none, body) => {
-        set text(size: 23pt, fill: self.colors.neutral-darkest)
+        set text(size: hszg-font-size, fill: self.colors.neutral-darkest)
         show heading.where(level: 3): set text(fill: self.colors.primary)
         show heading.where(level: 4): set text(fill: self.colors.primary)
         show: codly-init.with()
