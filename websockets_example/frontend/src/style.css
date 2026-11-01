@@ -1,0 +1,42 @@
+#app {
+  max-width: 480px;
+  margin: 2rem auto;
+  font-family: sans-serif;
+}
+
+#messages {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-height: 200px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.controls button:disabled {
+  opacity: 0.5;
+}
+
+#messages li {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+#send-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+#message-input {
+  flex: 1;
+  padding: 0.5rem;
+}
