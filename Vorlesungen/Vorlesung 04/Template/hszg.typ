@@ -493,8 +493,13 @@
         set text(size: hszg-font-size, fill: self.colors.neutral-darkest)
         show heading.where(level: 3): set text(fill: self.colors.primary)
         show heading.where(level: 4): set text(fill: self.colors.primary)
-        show: codly-init.with()
-        codly(languages: codly-languages)
+        
+        show: codly.lang-set_(languages: codly-languages)
+        show raw.where(block: true): codly.new
+        show: codly.theme("one-light", accent: rgb("8250df"))
+
+        // show: codly-init.with()
+        // codly(languages: codly-languages)
         body
       },
       alert: utils.alert-with-primary-color,

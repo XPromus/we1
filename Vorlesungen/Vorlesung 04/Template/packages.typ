@@ -9,5 +9,5 @@
   guideline: ("Richtlinie"),
 )
 
-#import "@preview/codly:1.3.0": *
-#import "@preview/codly-languages:0.1.1": *
+#import "@preview/codly:2.0.0" as codly
+#import "@preview/codly-languages:0.1.8": codly-languages

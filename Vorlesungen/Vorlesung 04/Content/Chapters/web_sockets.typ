@@ -20,7 +20,7 @@
   
   #pause
   - Eine einzelne persistente TCP Verbindung
-  - Wird mit HTTP konfiguriert bzw. verhandelt
+  - Wird über HTTP ausgehandelt (Handshake)
   - Wird danach zu einer full-duplex bzw. einem bidirektionalem Kanal (definiert nach RFC 6455)
   - Beide Seiten können Nachrichten schicken mit minimalem Overhead
 ]
@@ -90,7 +90,7 @@ sequenceDiagram
     - *Frame-Typen*
       - Text — UTF-8, typischer Fall für JSON-Nachrichten
       - Binary — Blobs, ArrayBuffer, z. B. Bilder oder Audio
-      - Ping/Pong — Herzschlag: der Server (oder Client) sendet `Ping`, der Partner antwortet sofort mit `Pong`. Hält NAT-Timeouts und Proxys davon ab, die stille Verbindung abzubauen. Erwartet spätestens nach ~30 s Abbruch.
+      - Ping/Pong — Herzschlag: der Server (oder Client) sendet `Ping`, der Partner antwortet sofort mit `Pong`. Hält NAT-Timeouts und Proxys davon ab, die stille Verbindung abzubauen. Bleibt der Pong aus, gilt die Verbindung als tot und wird nach ~30 s abgebaut..
     - *Fragmentation:* Große Nachrichten dürfen in mehrere Kontinuations-Frames zerlegt werden (relevant für Streaming großer Binärdaten).
   ]
 ]
@@ -263,10 +263,10 @@ flowchart LR
 
 #slide(align: horizon)[
   *Im Browser:*
-  - WebSocket-API des Browsers liefert Header
+  - WebSocket-API des Browsers liest den Frame-Header
   - Erkennt Opcode `0x1` (Text)
   - Dekodiert den Payload als UTF-8
-  - Übergibt Ergebnishandler
+  - Übergibt Ergebnis dem Handler
 
   ```javascript
     socket.onmessage = (event) => {
@@ -289,10 +289,80 @@ flowchart LR
     [Frame 2], [`FIN=1, Opcode=0x0, Payload="Engineering"`], [`80 0B 45 6E …`]
   )
 
+  - `MASK=0` wurde gesetzt, also Server $arrow$ Client
   - Erst mit dem zweiten Frame ist die Nachricht vollständig
   - Wichtig: Der Opcode (`0x1` Text) steht nur im ersten Frame
   - Alle Continuation-Frames tragen nur `0x0`
   - Ein anderer Opcode im Continuation-Frame wäre Protokollverstoß
+
+  #speaker-note()[
+    ```md
+      0x01 = 0000 0001
+             ||-| |--|
+             ||   |- Opcode (4 Bit) = 0001 (Text)
+             ||- RSV1-3 (3 Bit) = 000
+             |- FIN (1 Bit) = 0
+    ```
+  ]
+]
+
+#let source = "01 04 57 65 62 20"
+
+#slide(align: horizon)[
+  *Frame 1*
+  #codly.new(
+    source,
+    highlights: (
+      (line: 1, start: 1, end: 2),
+    ),
+    header: [Hex]
+  )
+  
+  #codly.new(
+    ```
+      0000 0001
+      ||-| |--| Opcode = 0x1 -> Text
+      || RSV = 000 -> Keine Erweiterung
+      | FIN = 0 -> Nachricht noch nicht zu Ende
+    ```,
+    header: [Byte 1 in Binär]
+  )
+]
+
+#slide(align: horizon)[
+  *Frame 1*
+  #codly.new(
+    source,
+    highlights: (
+      (line: 1, start: 4, end: 5),
+    ),
+    header: [Hex]
+  )
+  
+  #codly.new(
+    ```
+      0000 0100
+      |--| |--| Payload-Länge = 4 -> Payload besteht aus 4 Bytes
+      |MASK = 0 -> kein Masking-Key, kein XOR (Server ist Absender)
+    ```,
+    header: [Byte 1 in Binär]
+  )
+]
+
+#slide(align: horizon)[
+  *Frame 1*
+  #codly.new(
+    source,
+    highlights: (
+      (line: 1, start: 7, end: 17),
+    ),
+    header: [Hex]
+  )
+
+  - `0101 0111` $arrow$ `w`
+  - `0110 0101` $arrow$ `e`
+  - `0110 0010` $arrow$ `b`
+  - `0010 0000` $arrow$ ` `
 ]
 
 == Server & Client API

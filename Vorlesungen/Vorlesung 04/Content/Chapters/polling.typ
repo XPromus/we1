@@ -162,6 +162,7 @@
 ]
 
 #slide(align: horizon)[
+  #set text(size: 16pt)
   ```javascript
     async function longPoll(lastId = 0) {
       while (true) {
@@ -181,7 +182,7 @@
     }
     longPoll();
   ```
-
+  #set text(size: 20pt)
   *Wichtig*: Der Client merkt sich, was er schon hat (`lastId`), damit keine Nachricht zwischen zwei Anfragen verloren geht.
 
   #speaker-note[
@@ -289,4 +290,20 @@
     Bei "1-Sekunden-Polling von 1000 Nutzern" die Hochrechnung kurz
     vorführen (1000 Requests/s).
   ]
+]
+
+== Probleme
+
+#slide(align: horizon)[
+  *Ausgangslage:* 
+  - HTTP hat eine feste Rollenverteilung: *Nur der Client draf fragen*, der Server kann nur antworten
+  - Bei klassischen Seiten egal
+  - Bei Echtzeitanwendungen ein wirkliches Problem, z.B. Chat, Live-Ticker oder Multiplayer-Spiele (Server soll Client auch erreichen)
+
+  *Vier Stufen der Verbindung:*
+  #set enum(numbering: "1.")
+  + *Kurzes Polling:* Client fragt alle paar Sekunden. Verschwendung und Latenz
+  + *Long Polling:* Server hält Antwort offen, bis ein Ergebnis eintrifft. Jede Nachricht ist immer noch eine volle Anfrage
+  + *SSE:* Dauerhafte offene HTTP-Verbindung für Server $arrow$ Client mit eingebautem Reconnect. Client $arrow$ Server bleibt Request
+  + *WebSocket:* ?
 ]

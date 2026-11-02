@@ -11,12 +11,12 @@
 
 #show: hszg-theme.with(
   config-info(
-    title: [Polling & Long Polling],
+    title: [Polling & Web Sockets],
     subsubtitle: [Vorlesung 04],
     course: [Web Engineering 1],
     coursenumber: [319300],
     author: [M.Sc. Christopher-Manuel Hilgner],
-    date: datetime(day: 27, month: 10, year: 2026),
+    date: datetime(day: 03, month: 11, year: 2026),
     institution: [Hochschule Zittau/Görlitz],
     contact: [christopher.hilgner\@stud.hszg.de]
   ),
