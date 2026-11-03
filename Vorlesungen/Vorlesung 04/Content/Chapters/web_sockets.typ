@@ -116,7 +116,7 @@ sequenceDiagram
 
 /*
 flowchart LR
-    subgraph HTTP ["HTTP: Request–Response (halbdu Plex)"]
+    subgraph HTTP ["HTTP: Request–Response (halbduplex)"]
         A1[Client] -- "Request 1" --> B1[Server]
         B1 -- "Response 1" --> A1
         A1 -. "Request 2 (Polling)<br>Kopf-Overhead ~500 Byte" .-> B1
@@ -129,9 +129,55 @@ flowchart LR
 */
 
 #slide(align: horizon)[
-  #figure(
-    image("../../Images/websocket_http_comp.png")
-  )
+  // #figure(
+  //   image("../../Images/websocket_http_comp.png")
+  // )
+  
+  // #fletcher.diagram(
+  //   node-stroke: 0.8pt,
+  //   node-fill: luma(245),
+  //   spacing: (4em, 5em),
+  //   edge-stroke: .8pt,
+
+  //   node((1, 2.9), [HTTP: Request-Response (halbduplex)],
+  //   shape: rect, fill: none, stroke: (paint: luma(120), dash: "dashed"), layer: -1),
+
+  //   node((0, 2), [Client], name: <c1>),
+  //   node((2, 2), [Server], name: <s1>),
+
+  //   edge(<c1>, <s1>, "-|>", bend: 14deg,
+  //     label: text(size: 8pt)[Request 1], label-side: left),
+  //   edge(<s1>, <c1>, "-|>", bend: 14deg,
+  //     label: text(size: 8pt)[Response 1], label-side: left),
+  //   edge(<c1>, <s1>, "-|>", bend: 14deg, shift: (0, -1),
+  //     stroke: (dash: "dashed"),
+  //     label: text(size: 8pt)[Request 2 (Polling)\
+  //       Kopf-Overhead ~500 Byte], label-side: left),
+  //   edge(<s1>, <c1>, "-|>", bend: 14deg, shift: (0, -1),
+  //     stroke: (dash: "dashed"),
+  //     label: text(size: 8pt)[Response 2], label-side: left),
+
+  //   node((5, 2.9), [WebSocket: Vollduplex über eine Verbindung], shape: rect, fill: none, stroke: (paint: luma(120), dash: "dashed"), layer: -1),
+
+  //   node((4, 2), [Client], name: <c2>),
+  //   node((6, 2), [Server], name: <s2>),
+
+  //   edge(<c2>, <s2>, "-", stroke: 1.8pt,
+  //     label: text(size: 8pt)[Frames ~2–10 Byte\
+  //       beide Richtungen jederzeit], label-side: left),
+  // )
+  
+  *HTTP*
+  - Halbduplex: pro Kommunikation genau eine Richtung $arrow$ erst fragen, dann antworten
+  - Nur der Client kann initiieren; der Server schweigt, bis Request kommt
+  - Jede Nachricht kostet einen vollen Request-Zyklus (~500 Byte Header)
+  - Für Neuigkeiten: Polling $arrow$ wiederholte, meist leere Anfrage
+
+  *Web Sockets*
+  - Eine einzige persistente Verbindung für die gesamte Sitzung
+  - Beide Seiten senden jederzeit, ohne neuen Verbindungsaufbau
+  - Jede Nachricht ist ein schlanker Frame (~2-10 Byte Overhead)
+  - Der Server pusht aktiv: keine Anfrage, keine Wartezeit
 
   #speaker-note()[
     *Kernaussage:* Beide Modelle laufen über TCP und können dieselben Daten transportieren. 
@@ -215,7 +261,7 @@ flowchart LR
     ),
     [`0x0`], [Continuation], [Fortsetzung einer fragmentierten Nachricht],
     [`0x1`], [Text], [UTF-8-Nachricht, als Grenzes dekodierbar],
-    [`0x2`], [Binary], [beliebige Binärdaen (ArrayBuffer/Blob)],
+    [`0x2`], [Binary], [beliebige Binärdaten (ArrayBuffer/Blob)],
     [`0x8`], [Close], [leitet den geordneten Abbau ein],
     [`0x9`], [Ping], [Herzschlag-Anfrage],
     [`0xA`], [Pong], [Herzschlag-Antwort],
@@ -238,6 +284,7 @@ flowchart LR
   Das Payload wird byteweise mit `payload[i] XOR key[i mod 4]` maskiert. 
   Der Empfänger (Server) demaskiert identisch. 
   Beachte: *Der Frame-Header wird nie selbst maskiert.*
+  Maskierung basiert auf der Regel: `a XOR k XOR k = a`
 
   *Payload:* die eigentlichen Daten, 0 Byte bis zur 64-Bit-Grenze.
 ]
@@ -345,7 +392,7 @@ flowchart LR
       |--| |--| Payload-Länge = 4 -> Payload besteht aus 4 Bytes
       |MASK = 0 -> kein Masking-Key, kein XOR (Server ist Absender)
     ```,
-    header: [Byte 1 in Binär]
+    header: [Byte 2 in Binär]
   )
 ]
 
@@ -411,5 +458,5 @@ flowchart LR
     [Protokoll], [HTTP], [HTTP], [HTTP], [eigenes Protokoll],
   )
 
-  *Fun-Fact:* Server-Side Events (SSE) wurden wieder populär für AI Streaming (z.B. ChatGPT Token Streams)
+  *Fun-Fact:* Server-Sent Events (SSE) wurden wieder populär für AI Streaming (z.B. ChatGPT Token Streams)
 ]

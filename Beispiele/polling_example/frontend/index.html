@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Polling Example</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Polling vs. Long Polling</h1>
+      <p class="hint">
+        Start the Java backend first (<code>./gradlew run</code> in <code>backend/</code>,
+        port 8888), then compare the two panels below and send an update.
+      </p>
+
+      <form id="update-form">
+        <input
+          id="update-input"
+          type="text"
+          placeholder="New server message..."
+          autocomplete="off"
+        />
+        <button type="submit">Send update (POST /api/update)</button>
+      </form>
+
+      <div class="panels">
+        <section class="panel">
+          <h2>Short polling</h2>
+          <p>
+            <code>GET /api/state</code> every
+            <input id="short-interval" type="number" value="2" min="1" max="60" /> s —
+            the server always answers immediately, even if nothing changed.
+          </p>
+          <div class="controls">
+            <button id="short-start" type="button">Start</button>
+            <button id="short-stop" type="button" disabled>Stop</button>
+          </div>
+          <p class="stats" id="short-stats">requests: 0 · unchanged answers: 0</p>
+        </section>
+
+        <section class="panel">
+          <h2>Long polling</h2>
+          <p>
+            <code>GET /api/longpoll?since=…</code> — the server holds the request open
+            until the state changes (or 25&nbsp;s pass), then answers.
+          </p>
+          <div class="controls">
+            <button id="long-start" type="button">Start</button>
+            <button id="long-stop" type="button" disabled>Stop</button>
+          </div>
+          <p class="stats" id="long-stats">requests: 0</p>
+        </section>
+      </div>
+
+      <h2>Event log</h2>
+      <ul id="log"></ul>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

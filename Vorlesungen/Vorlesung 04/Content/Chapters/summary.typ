@@ -14,7 +14,7 @@
   - Client fragt an, der Server hält die Antwort offen bis ein Ergebnis vorliegt
   - Leerfahrten entfallen
   - Jede Nachricht kostet trotzdem einen kompletten HTTP-Zyklus
-  *Server-Side Events (SSE):*
+  *Server-Sent Events (SSE):*
   - Dauerhaft offene HTTP Verbindung
   - Server streamt Daten zum Client
   - Nur Server $arrow$ Client, Client muss weiterhin Requests stellen

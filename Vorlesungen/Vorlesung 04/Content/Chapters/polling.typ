@@ -129,7 +129,7 @@
   - Kurzes Intervall = Extra Last auf Server und Netz
   - Langes Intervall = Träge UI
 
-  *Typischer Einsatz*: Dashboards, Statusabfragen von langlaufenden Jobs, wenn Verzögerungen von Sekunden egal sind
+  *Typischer Einsatz*: Dashboards, Statusabfragen von lang laufenden Jobs, wenn Verzögerungen von Sekunden egal sind
 
   #speaker-note[
     Rechenfrage ans Auditorium: Warum im Schnitt 2,5 Sekunden Verzögerung bei
@@ -296,7 +296,7 @@
 
 #slide(align: horizon)[
   *Ausgangslage:* 
-  - HTTP hat eine feste Rollenverteilung: *Nur der Client draf fragen*, der Server kann nur antworten
+  - HTTP hat eine feste Rollenverteilung: *Nur der Client darf fragen*, der Server kann nur antworten
   - Bei klassischen Seiten egal
   - Bei Echtzeitanwendungen ein wirkliches Problem, z.B. Chat, Live-Ticker oder Multiplayer-Spiele (Server soll Client auch erreichen)
 

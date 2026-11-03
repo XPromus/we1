@@ -1,0 +1,108 @@
+#app {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: sans-serif;
+}
+
+.hint {
+  color: #666;
+}
+
+code {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.9em;
+  background: #f0f0f0;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+#update-form {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+#update-input {
+  flex: 1;
+  padding: 0.5rem;
+}
+
+.panels {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.panel {
+  flex: 1 1 280px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+.panel p {
+  font-size: 0.9rem;
+  color: #444;
+}
+
+#short-interval {
+  width: 3.5em;
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.controls button:disabled {
+  opacity: 0.5;
+}
+
+.stats {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.8rem;
+}
+
+#log {
+  list-style: none;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-height: 200px;
+  max-height: 320px;
+  overflow-y: auto;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.85rem;
+}
+
+#log li {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+#log .time {
+  color: #888;
+  margin-right: 0.5rem;
+}
+
+.tag {
+  display: inline-block;
+  min-width: 3.2em;
+  text-align: center;
+  border-radius: 4px;
+  padding: 0 4px;
+  margin-right: 0.5rem;
+  font-size: 0.75rem;
+  color: #fff;
+}
+
+.tag-short { background: #3b82f6; }
+.tag-long  { background: #22a06b; }
+.tag-post  { background: #d97706; }
