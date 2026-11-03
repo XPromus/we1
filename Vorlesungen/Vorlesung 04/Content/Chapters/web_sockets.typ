@@ -203,6 +203,15 @@ flowchart LR
   - Der Server antwortet mit `101 Switching Protocols` und einem `Sec-WebSocket-Accept` Value
   - Beweis dafür, dass der Server WebSockets benutzen kann
   - HTTP ist jetzt fertig $arrow$ TCP übernimmt mit dem *WebSocket framing protocol*
+
+  #speaker-note()[
+    Codebeispiel:
+    `Upgrade: websocket` + `Connection: Upgrade`: Forderung nach Protokollwechsel
+    - `Connection: Upgrade`: gehört grammatikalisch dazu, wird gern vergessen
+    - Fehlende Header: Ablehnung `400 Bad Request`
+    - `Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==`: Konstante aus RFC 6455
+    - `Sec-WebSocket-Version: 13`: Versionsnummer, 1-12 waren experimentelle Phasen, 13 ist endgültig. Bei Versionunterschieden `426 Upgrade Required`
+  ]
 ]
 
 == Protokoll Komponenten
@@ -227,7 +236,7 @@ flowchart LR
     node-shape: rect,
     node((0, 0), [FIN \ 1 Bit]),
     edge(),
-    node((1, 0), [RSVI-3 \ 3 Bit]),
+    node((1, 0), [RSV1-3 \ 3 Bit]),
     edge(),
     node((2, 0), [Opcode \ 4 Bit]),
     edge(),
@@ -239,6 +248,17 @@ flowchart LR
     edge(),
     node((0, 2), [Payload \ maximal 8 Exbibyte]),
   )
+
+  #speaker-note()[
+    - Diagram ist Bytereihenfolge von links nach rechts, wie sie beim Empfänger ankommt
+    - Logik mit Fragen
+      1. Was kommt? (FIN, Opcode)
+      2. Wie viel kommt? (Länge)
+      3. Wie entschlüsselt (Masking-Key)
+    - Zentraler Gedanke: Empfänger kann Länge aus dem Header ableiten ohne Payload zu lesen
+    - Auch bei Fragmentierung weiß Empfänger wo Frame endet und neuer beginnt
+    - Reihenfolge ist wichtig für das Protokoll
+  ]
 ]
 
 == Komponenten
@@ -249,6 +269,12 @@ flowchart LR
     - `0` = es folgen Kontinuations-Frames (Opcode `0`) bis ein Frame mit `FIN=1` kommt
   
   *RSV1-RSV3 (je 1 Bit):* reserviert, müssen `0` sein, *außer* eine Erweiterung ist ausgehandelt
+
+  #speaker-note()[
+    *FIN - Fragmentierungs-Flag*:
+    - Entscheidet ob Nachricht sofort weitergeben werden kann `FIN=1` oder in einen Buffer kommt bis der Rest da ist `FIN=0`
+    *RSV1-RSV3:* reserviert, müssen `0` sein, *außer* eine Erweiterung ist ausgehandelt
+  ]
 ]
 
 #slide(align: horizon)[
