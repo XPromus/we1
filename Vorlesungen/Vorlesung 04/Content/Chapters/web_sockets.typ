@@ -85,12 +85,12 @@ sequenceDiagram
   #speaker-note()[
     #set text(size: 19pt)
     - *Ein TCP-Socket, beide Richtungen, jederzeit:* Weder Client noch Server müssen auf eine Anfrage warten. Der Server kann von sich aus Nachrichten pushen, der zentrale Unterschied zum Request-Response-Modell.
-    - *Frames statt Header:* Jede Nachricht besteht aus Frames mit nur *2-10 Byte Overhead* (gegenüber ~500 Byte HTTP-Header pro Polling-Request). Geringe Latenz, geringer Overhead.
+    - *Frames statt Header:* Jede Nachricht besteht aus Frames mit nur *maximal 14 Byte Overhead* (gegenüber ~500 Byte HTTP-Header pro Polling-Request). Geringe Latenz, geringer Overhead.
     - *Maskierung (nur Client → Server):* Jeder Client-Frame wird mit einem zufälligen *4-Byte-XOR-Schlüssel* maskiert. Grund: Schutz vor Middleware-Proxys, die maskierte Daten nicht als HTTP-Header missinterpretieren können (Cache-Poisoning-Abwehr aus der Geschichte des Protokolls). Server-Frames sind unmaskiert.
     - *Frame-Typen*
       - Text — UTF-8, typischer Fall für JSON-Nachrichten
       - Binary — Blobs, ArrayBuffer, z. B. Bilder oder Audio
-      - Ping/Pong — Herzschlag: der Server (oder Client) sendet `Ping`, der Partner antwortet sofort mit `Pong`. Hält NAT-Timeouts und Proxys davon ab, die stille Verbindung abzubauen. Bleibt der Pong aus, gilt die Verbindung als tot und wird nach ~30 s abgebaut..
+      - Ping/Pong — Herzschlag: der Server (oder Client) sendet `Ping`, der Partner antwortet sofort mit `Pong`. Hält NAT-Timeouts und Proxys davon ab, die stille Verbindung abzubauen. Bleibt der Pong aus, gilt die Verbindung als tot und wird typischerweise nach ~30 s abgebaut..
     - *Fragmentation:* Große Nachrichten dürfen in mehrere Kontinuations-Frames zerlegt werden (relevant für Streaming großer Binärdaten).
   ]
 ]
@@ -176,7 +176,7 @@ flowchart LR
   *Web Sockets*
   - Eine einzige persistente Verbindung für die gesamte Sitzung
   - Beide Seiten senden jederzeit, ohne neuen Verbindungsaufbau
-  - Jede Nachricht ist ein schlanker Frame (~2-10 Byte Overhead)
+  - Jede Nachricht ist ein schlanker Frame (maximal 14 Byte Overhead)
   - Der Server pusht aktiv: keine Anfrage, keine Wartezeit
 
   #speaker-note()[
@@ -237,7 +237,7 @@ flowchart LR
     edge(),
     node((2, 1), [Masking-Key \ 4 Byte (wenn MASK=1)]),
     edge(),
-    node((0, 2), [Payload \ 0 - $2^(64)$ - 1 Byte]),
+    node((0, 2), [Payload \ maximal 8 Exbibyte]),
   )
 ]
 
@@ -276,17 +276,34 @@ flowchart LR
   *Payload-Länge (7 Bit + optional):* drei Stufen:
   1. Länge `0-125`: passt direkt in die 7 Bit, kein Zusatzfeld
   2. Wert `126`: die nächsten *2 Byte* (16 Bit, bis 65.535) tragen die echte Länge
-  3. Wert `127`: die nächsten *8 Byte* (64 Bit) tragen die echte Länge (bis ~16 Exbibyte). Der Wert muss in minimaler Form kodiert sein: Länge 100 mit 8-Byte-Kodierung ist ein Protokollverstoß.
+  3. Wert `127`: die nächsten *8 Byte* (64 Bit) tragen die echte Länge 
+  // (bis ~16 Exbibyte). Der Wert muss in minimaler Form kodiert sein: Länge 100 mit 8-Byte-Kodierung ist ein Protokollverstoß.
 ]
 
 #slide(align: horizon)[
-  *Masking-Key (4 Byte, bei MASK=1):* ein zufälliger XOR-Schlüssel. 
-  Das Payload wird byteweise mit `payload[i] XOR key[i mod 4]` maskiert. 
-  Der Empfänger (Server) demaskiert identisch. 
-  Beachte: *Der Frame-Header wird nie selbst maskiert.*
-  Maskierung basiert auf der Regel: `a XOR k XOR k = a`
-
+  *Masking-Key (4 Byte, bei MASK=1):* ein zufälliger XOR-Schlüssel 
+  - Payload wird byteweise mit `payload[i] XOR key[i mod 4]` maskiert 
+  - Empfänger (Server) demaskiert identisch
+  - *Beachte:* Der Frame-Header wird nie selbst maskiert
+  - Maskierung basiert auf der Regel: `a XOR k XOR k = a`
+  - *Ziel:* Proxy soll Bytes nicht als HTTP wahrnehmen
+  - *Risiko:* Requests in den Proxy schmuggeln um andere Daten zu erhalten
+  
   *Payload:* die eigentlichen Daten, 0 Byte bis zur 64-Bit-Grenze.
+
+  // #speaker-note()[
+  //   #set text(size: 20pt)
+  //   - Grund historisch und betrifft Middleboxes, nicht Server 
+  //   - Proxys und transparente Middlewares interpretieren eingehende Bytes als HTTP-Header 
+  //   - Böswilliger Client könnte in einem WebSocket-Frame Bytes schicken die exakt wie HTTP-Anweisungen aussehen (z. B. GET /admin HTTP/1.1) - Ziel: Caching-Proxy zwischendurch speichert Antwort und vergiftet Cache (Cache-Poisoning)
+  //   - Maskierung macht Byte vorhersagen mathematisch unmöglich
+  //   - Ergebnis hängt vom passenden Schlüssel ab
+  //   - Maskierung ist es dem Client mathematisch unmöglich vorherzusagen, welche Bytes auf der Leiste ankommen, selbst wenn er den gewünschten Klartext kennt, hängt das Ergebnis vom zufälligen Schlüssel ab, den er nicht selbst „passend“ wählen kann, ohne gleichzeitig den Schlüssel im selben Frame offenzulegen.
+  //   Warum nur die Client-Richtung? Weil Server innerhalb des Rechenzentrums als vertrauenswürdig gelten. 
+  //   Der Angreifer in diesem Szenario ist immer der kontrollierbare Browser-Client, nicht der eigene Server.
+
+  //   MASK ist keine Verschlüsselung, sondern ein *Verfälschungsschutz*: Der Client darf bestimmen, was er sendet, aber die Maskierung nimmt ihm die Kontrolle darüber, welche Bytes der Proxy zu sehen bekommt - und genau diese Kontrolle bräuchte ein Cache-Poisoning-Angriff.
+  // ]
 ]
 
 == Konkretes Beispiel (Server $arrow$ Client)
@@ -298,7 +315,7 @@ flowchart LR
 
   #set text(size: 20pt)
   #table(
-    columns: (1fr, 1fr, 1fr, 1fr),
+    columns: (auto, auto, auto, 1fr),
     table.header(
       [Byte(s)], [Hex], [Binär], [Bedeutung]
     ),
@@ -406,7 +423,7 @@ flowchart LR
     header: [Hex]
   )
 
-  - `0101 0111` $arrow$ `w`
+  - `0101 0111` $arrow$ `W`
   - `0110 0101` $arrow$ `e`
   - `0110 0010` $arrow$ `b`
   - `0010 0000` $arrow$ ` `
@@ -440,7 +457,7 @@ flowchart LR
 #slide(align: horizon)[
   *Event Loop:* `onmessage` Callbacks sind normale Tasks, Nachrichten die ankommen werden in die Queue gelegt und asynchron abgearbeitet (wie `setTimeout`/`Promise`) \
 
-  *Promises/async-await:* Connection, Reconnection und send ackowledgements werden in Promises verpackt
+  *Promises/async-await:* Connection, Reconnection und send ackowledgements werden in den meisten Bibliotheken als Promises verpackt (auf Browser Ebene ereignisbasiert `onopen`/`onmessage`/`onclose`)
 ]
 
 == Vergleich zu Alternativen
@@ -454,7 +471,7 @@ flowchart LR
     ),
     [Richtung], [Client $arrow$ Server], [Client $arrow$ Server], [Server $arrow$ Client], [*Bidirektional*],
     [Latenz], [Hoch], [Mittel], [Niedrig], [*geringste*],
-    [Overhead], [komplette HTTP Header], [komplette HTTP Header], [wenig], [*~2-10*],
+    [Overhead], [komplette HTTP Header], [komplette HTTP Header], [wenig], [max. 14 Byte],
     [Protokoll], [HTTP], [HTTP], [HTTP], [eigenes Protokoll],
   )
 

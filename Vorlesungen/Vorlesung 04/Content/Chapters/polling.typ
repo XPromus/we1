@@ -90,30 +90,31 @@
   ]
 ]
 
-#slide(align: horizon)[
-  ```javascript
-    async function poll() {
-      try {
-        const response = await fetch("/api/orders/42/status");
-        if (!response.ok) throw new Error("HTTP ${response.status}");
-        const { status } = await response.json();
-        updateUI(status);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setTimeout(poll, 5000);
-      }
-    }
-    poll();
-  ```
+// #slide(align: horizon)[
+//   #set text(size: 20pt)
+//   ```javascript
+//     async function poll() {
+//       try {
+//         const response = await fetch("/api/orders/42/status");
+//         if (!response.ok) throw new Error(`HTTP ${response.status}`);
+//         const { status } = await response.json();
+//         updateUI(status);
+//       } catch (error) {
+//         console.error(error);
+//       } finally {
+//         setTimeout(poll, 5000);
+//       }
+//     }
+//     poll();
+//   ```
 
-  #speaker-note[
-    Gegenüberstellung mit dem ersten Beispiel: Der Unterschied steckt komplett
-    im finally-Block -- setTimeout startet erst, wenn die vorherige Anfrage
-    abgeschlossen ist (auch im Fehlerfall). Serielle Ausführung statt
-    möglicher Parallelität.
-  ]
-]
+//   #speaker-note[
+//     Gegenüberstellung mit dem ersten Beispiel: Der Unterschied steckt komplett
+//     im finally-Block -- setTimeout startet erst, wenn die vorherige Anfrage
+//     abgeschlossen ist (auch im Fehlerfall). Serielle Ausführung statt
+//     möglicher Parallelität.
+//   ]
+// ]
 
 == Bewertung
 
@@ -161,38 +162,41 @@
   ]
 ]
 
-#slide(align: horizon)[
-  #set text(size: 16pt)
-  ```javascript
-    async function longPoll(lastId = 0) {
-      while (true) {
-        try {
-          const response = await fetch("/path?after=${lastId}");
-          if (response.status == 200) {
-            const messages = await response.json();
-            messages.forEach(show);
-            lastId = messages.at(-1).id;
-          }
-          // 204 = Timeout ohne Neuigkeiten, erneut fragen
-        } catch (error) {
-          console.error(error);
-          await new Promise((resolve) => setTimeout(resolve, 5000)); // Pause bei Fehler
-        }
-      }
-    }
-    longPoll();
-  ```
-  #set text(size: 20pt)
-  *Wichtig*: Der Client merkt sich, was er schon hat (`lastId`), damit keine Nachricht zwischen zwei Anfragen verloren geht.
+// #slide(align: horizon)[
+//   #set text(size: 16pt)
+//   ```javascript
+//     async function longPoll(lastId = 0) {
+//       while (true) {
+//         try {
+//           const response = await fetch(`/path?after=${lastId}`);
+//           if (!response.ok) throw new Error(`HTTP ${response.status}`);
+//           if (response.status === 200) {
+//             const messages = await response.json();
+//             if (messages.length > 0) {
+//               messages.forEach(show);
+//               lastId = messages.at(-1).id;
+//             }
+//           }
+//           // 204 = Timeout ohne Neuigkeiten, erneut fragen
+//         } catch (error) {
+//           console.error(error);
+//         }
+//         await new Promise((resolve) => setTimeout(resolve, 5000)); // Pause bei Fehler
+//       }
+//     }
+//     longPoll();
+//   ```
+//   #set text(size: 20pt)
+//   *Wichtig*: Der Client merkt sich, was er schon hat (`lastId`), damit keine Nachricht zwischen zwei Anfragen verloren geht.
 
-  #speaker-note[
-    Fokus auf lastId: Das Cursor-Prinzip schließt die Lücke, die zwischen zwei
-    Anfragen entsteht -- eine Nachricht, die genau dazwischen am Server
-    ankommt, wird mit dem nächsten Poll über "after" noch geliefert.
-    Kurz auf den Fehlerzweig eingehen: 5-Sekunden-Pause ist hier bereits
-    einfachstes Backoff.
-  ]
-]
+//   #speaker-note[
+//     Fokus auf lastId: Das Cursor-Prinzip schließt die Lücke, die zwischen zwei
+//     Anfragen entsteht -- eine Nachricht, die genau dazwischen am Server
+//     ankommt, wird mit dem nächsten Poll über "after" noch geliefert.
+//     Kurz auf den Fehlerzweig eingehen: 5-Sekunden-Pause ist hier bereits
+//     einfachstes Backoff.
+//   ]
+// ]
 
 == Long Polling bewertet
 
