@@ -1,3 +1,5 @@
+// LTeX: enabled=true language=de-DE
+
 #import "../../Template/hszg.typ": *
 
 = Layered Model
@@ -18,7 +20,7 @@
 #slide(align: horizon)[
   Drei Aufgaben, die jede Application erfüllen muss:
   #set enum(numbering: "1.")
-  1. *Darstellung:* Output rendern und User Interkation verwalten (HTML, CSS, JS, ...)
+  1. *Darstellung:* Output rendern und User Interaktion verwalten (HTML, CSS, JS, ...)
   2. *Business Logic:* Die tatsächlichen Regeln der Domain (Ein Kunde kann eine Bestellung innerhalb von 30 Tagen)
   3. *Datenzugriff:* State erhalten und behalten (SQL, ORM, Cache, externe APIs)
 ]
@@ -50,7 +52,7 @@
 
 #slide(align: horizon)[
   *Layers*
-  - Logische Gruppen aus Code (Präsetation, Logik, Daten)
+  - Logische Gruppen aus Code (Präsentation, Logik, Daten)
   - Sie können alle in einem Prozess laufen
 
   *Tiers*

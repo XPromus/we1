@@ -60,7 +60,7 @@
   #table(
     columns: (auto, 1fr),
     table.header(
-      [Qualitätsattribut], [Welche Architekur erlaubt es?]
+      [Qualitätsattribut], [Welche Architektur erlaubt es?]
     ),
     [Skalierbarkeit], [Stateless Server, Horizontales Skalieren, Caching Tiers],
     [Wartbarkeit], [Separation von Aufgaben, Wenige interne Abhängigkeiten],
@@ -74,7 +74,7 @@
 #slide(align: horizon)[
   *Ökonomische Argumente:*
   - Architektur ist: Jetzt günstig, später teuer (ein Live-System umbauen kann 10-100x an Kosten verursachen)
-  - Conway's Law: Architektur wird auch das Team wiederspiegeln $arrow$ Entscheidungen für Architektur sind auch Teamweite Entscheidungen
+  - Conway's Law: Architektur wird auch das Team widerspiegeln $arrow$ Entscheidungen für Architektur sind auch Teamweite Entscheidungen
   
   *Konkrete Beispiele:*
   - Netflix migrierte von Monolith zu Microservices
@@ -101,7 +101,7 @@
   - Eine 7-jährige Reise zu hunderten Microservices auf AWS
   - Monolith und Microservices liefen parallel für Jahre
   - Heute: 700+ Microservices, die 15+ billionen API Aufrufe, verteilt auf 190+ Länder, täglich verwalten
-  - Netflix baute eingene OSS Tools wärend dem Prozess:
+  - Netflix baute eigene OSS Tools während dem Prozess:
     - Eureka (Service Discovery)
     - Hystrix (Circuit Breaker)
     - Zuul (Gateway)

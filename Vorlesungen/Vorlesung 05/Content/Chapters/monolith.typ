@@ -29,7 +29,7 @@
   *Stärken*
   - Eine Build/Deploy/Test Pipeline
   - Wenige Netzwerkanfragen
-  - Einfaches Recatorn über Module hinaus 
+  - Einfaches Refactoring über Module hinaus 
   - Einfaches lokales Entwickeln
 
   *Schwächen*

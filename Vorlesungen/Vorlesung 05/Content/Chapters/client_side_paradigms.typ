@@ -1,3 +1,5 @@
+// LTeX: enabled=true language=de-DE
+
 #import "../../Template/hszg.typ": *
 
 = Client-Side-Paradigma
@@ -86,7 +88,7 @@
   *Drei Prinzipien:*
   #set enum(numbering: "1.")
   + *Service Worker:* Ein programmierbarer Proxy zwischen Seite und Netzwerk. Fängt Requests ab und stellt Daten vom Cache bereit $arrow$ Offline Funktionalitäten
-  + *Wep App Manifest:* Metadaten (Name, Icons, Display Mode) erlauben "Installieren" der App zum Home Screen
+  + *Web App Manifest:* Metadaten (Name, Icons, Display Mode) erlauben "Installieren" der App zum Home Screen
   + *HTTPS:* Benötigt für die Service Worker mit eingebauter Sicherheit
 ]
 
