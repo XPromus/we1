@@ -11,7 +11,7 @@
 
 #show: hszg-theme.with(
   config-info(
-    title: [ES Modules & Bundling],
+    title: [Web Architektur],
     subsubtitle: [Vorlesung 05],
     course: [Web Engineering 1],
     coursenumber: [319300],
