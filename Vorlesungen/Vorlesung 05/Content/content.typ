@@ -10,6 +10,8 @@
 
 #include "Chapters/client_side_paradigms.typ"
 
+#include "Chapters/ssr.typ"
+
 #include "Chapters/monolith.typ"
 
 #include "Chapters/microservices.typ"

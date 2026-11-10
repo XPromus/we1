@@ -100,7 +100,7 @@
 #slide(align: horizon)[
   - Eine 7-jährige Reise zu hunderten Microservices auf AWS
   - Monolith und Microservices liefen parallel für Jahre
-  - Heute: 700+ Microservices, die 15+ billionen API Aufrufe, verteilt auf 190+ Länder, täglich verwalten
+  - Heute: 700+ Microservices, die 15+ milliarden API Aufrufe, verteilt auf 190+ Länder, täglich verwalten
   - Netflix baute eigene OSS Tools während dem Prozess:
     - Eureka (Service Discovery)
     - Hystrix (Circuit Breaker)
