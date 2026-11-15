@@ -11,3 +11,5 @@
 
 #import "@preview/codly:2.0.0" as codly
 #import "@preview/codly-languages:0.1.8": codly-languages
+
+#import "@preview/merman:0.6.0": mermaid

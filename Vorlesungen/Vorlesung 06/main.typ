@@ -11,7 +11,7 @@
 
 #show: hszg-theme.with(
   config-info(
-    title: [Same-Origin/CORS \ Cookies & Storage],
+    title: [Same-Origin/CORS, Cookies & Storage],
     subsubtitle: [Vorlesung 06],
     course: [Web Engineering 1],
     coursenumber: [319300],

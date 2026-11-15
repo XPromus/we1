@@ -1,0 +1,5 @@
+flowchart TD
+    A[Data from origin B<br/>reaches the browser] --> Q{Which code wants<br/>to interpret it?}
+    Q -->|Browser engine only<br/>render / execute / apply| OK[✅ Allowed<br/>embedding]
+    Q -->|JavaScript of another origin| NO[❌ Blocked<br/>unless server opts in via CORS]
+    NO --> EX[Why: the script could copy<br/>and exfiltrate the bytes —<br/>data B.com only sent<br/>because of the user's cookies]

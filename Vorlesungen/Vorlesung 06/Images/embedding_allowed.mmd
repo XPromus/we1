@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant S as Script (evil.com)
+    participant B as Browser
+    participant N as bank.com
+
+    S->>B: <img src="https://bank.com/photo.jpg">
+    B->>N: GET /photo.jpg  (Cookie: session=…)
+    N-->>B: 200 OK, image bytes
+    B-->>S: ✅ rendered on screen
+    Note over B: Bytes sind im browser,<br/>aber nicht beim Script
+    S->>B: drawImage() onto <canvas>
+    B-->>S: canvas now TAINTED
+    S->>B: getImageData() / toDataURL()
+    B-->>S: ❌ SecurityError — SOP blockiert den read

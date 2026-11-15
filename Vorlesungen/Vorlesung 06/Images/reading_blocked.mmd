@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant S as Script (evil.com)
+    participant B as Browser
+    participant N as bank.com
+
+    S->>B: fetch("https://bank.com/account")
+    B->>N: GET /account  (Cookie: session=…)
+    Note over B,N: The request goes out!<br/>No SOP here.
+    N-->>B: 200 OK, account details (HTML)
+    Note over B: Bytes arrive in the browser!<br/>No SOP here either.
+    B-->>S: ❌ response body withheld from script
+    S->>B: Send the bytes to my server!
+    B-->>S: nothing to send — script never had them
