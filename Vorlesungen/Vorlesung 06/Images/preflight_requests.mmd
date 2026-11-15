@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant S as Script (app.example.com)
+    participant B as Browser
+    participant A as api.example.com
+
+    S->>B: fetch("https://api.example.com/users", {method:"DELETE", headers:{Authorization:…}})
+    B->>A: OPTIONS /users<br/>Origin: https://app.example.com<br/>Access-Control-Request-Method: DELETE<br/>Access-Control-Request-Headers: authorization
+    A-->>B: 200 OK<br/>Access-Control-Allow-Origin: https://app.example.com<br/>Access-Control-Allow-Methods: DELETE<br/>Access-Control-Allow-Headers: authorization
+    Note over B: Preflight passed
+    B->>A: DELETE /users (the real request, with credentials)
+    A-->>B: 200 OK
+    B-->>S: response delivered to script
