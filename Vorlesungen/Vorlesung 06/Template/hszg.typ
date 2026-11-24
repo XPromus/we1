@@ -54,27 +54,29 @@
       },
       block(
         inset: (self.store.header-inset),
-        text(
-          fill: self.colors.primary,
-          weight: "bold",
-          size: 1.2em,
-          utils.call-or-display(self, self.store.header),
-        ),
-        // components.left-and-right(
-        //   text(
-        //     fill: self.colors.primary,
-        //     weight: "bold",
-        //     size: 1.2em,
-        //     utils.call-or-display(self, self.store.header),
-        //   ),
-        //   text(fill: self.colors.primary.lighten(65%), 
-        //   // utils.call-or-display(
-        //   //   self,
-        //   //   self.store.header-right,
-        //   // )),
-        //   )
+        // text(
+        //   fill: self.colors.primary,
+        //   weight: "bold",
+        //   size: 1.2em,
+        //   utils.call-or-display(self, self.store.header),
         // ),
-      ),
+        components.left-and-right(
+          text(
+            fill: self.colors.primary,
+            weight: "bold",
+            size: 1.2em,
+            utils.call-or-display(self, self.store.header),
+          ),
+          text(
+            fill: self.colors.secondary, 
+            weight: "bold",
+            utils.call-or-display(
+              self,
+              self.store.header-right,
+            )),
+          )
+        ),
+      // ),
     )
   }
   let footer(self) = {
@@ -434,9 +436,8 @@
   progress-bar: true,
 
   header: utils.display-current-heading(level: 2, style: auto),
-  // header-right: self => (
-  //   box(utils.display-current-heading(level: 1)) + h(.3em) + self.info.logo
-  // ),
+  header-right: self =>
+    utils.display-current-heading(level: 1, numbered: false),
   footer-columns: (25%, 1fr, 25%),
   footer-a: self => self.info.author,
   footer-b: self => if self.info.short-title == auto {
@@ -518,7 +519,7 @@
       header-inset: header-inset,
       progress-bar: progress-bar,
       header: header,
-      // header-right: header-right,
+      header-right: header-right,
       footer-columns: footer-columns,
       footer-a: footer-a,
       footer-b: footer-b,

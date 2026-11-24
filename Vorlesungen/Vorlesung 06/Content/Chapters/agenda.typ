@@ -3,8 +3,8 @@
 == Agenda
 
 #slide(align: horizon)[
-  - Same-Origin Policy (SOP)
-  - Cross-Origin Resource Sharing (CORS)
   - Cookies
   - Web Storage
+  - Same-Origin Policy (SOP)
+  - Cross-Origin Resource Sharing (CORS)
 ]
