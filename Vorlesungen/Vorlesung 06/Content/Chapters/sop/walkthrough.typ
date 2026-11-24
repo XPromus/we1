@@ -1,6 +1,6 @@
 #import "../../../Template/hszg.typ": *
 
-== Same-Origin vs. Cross-Origin: Walkthrough
+== SOP vs. CORS: Walkthrough
 
 #slide(align: horizon)[
     Base-URL: `https://app.example.com:443` (`443` ist HTTPS Port)

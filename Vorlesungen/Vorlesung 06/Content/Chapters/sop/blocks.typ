@@ -66,10 +66,10 @@
     ]
 ]
 
-#slide(align: horizon)[
-    #mermaid(decision_graph, theme-preset: "paper-cut", width: 100%, document-context: true)
-    #speaker-note()[
-        - Die Daten werden immer zum Client kommen (SOP kann das nicht verhindern)
-        - SOP garantiert, dass das letzte Stück, der Handoff vom Browser zum Script, nicht passiert (außer der Besitzer der Daten erlaubt es)
-    ]
-]
+// #slide(align: horizon)[
+//     #mermaid(decision_graph, theme-preset: "paper-cut", width: 100%, document-context: true)
+//     #speaker-note()[
+//         - Die Daten werden immer zum Client kommen (SOP kann das nicht verhindern)
+//         - SOP garantiert, dass das letzte Stück, der Handoff vom Browser zum Script, nicht passiert (außer der Besitzer der Daten erlaubt es)
+//     ]
+// ]
